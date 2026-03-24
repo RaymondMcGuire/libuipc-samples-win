@@ -171,3 +171,4 @@ imgui.ini
 # some deps will change frequently, 
 # so we don't want to commit the lock file
 uv.lock
+perf_report/
