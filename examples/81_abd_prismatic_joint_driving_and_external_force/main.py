@@ -15,7 +15,7 @@ from uipc.constitution import (
     AffineBodyConstitution,
     AffineBodyDrivingPrismaticJoint,
     AffineBodyPrismaticJoint,
-    AffineBodyPrismaticJointExternalBodyForce,
+    AffineBodyPrismaticJointExternalForce,
 )
 from uipc.geometry import (
     SimplicialComplex,
@@ -92,7 +92,7 @@ driving = AffineBodyDrivingPrismaticJoint()
 driving.apply_to(joint_mesh, 100.0)
 
 # 3) External force constitution (active during frames 101..200)
-ext = AffineBodyPrismaticJointExternalBodyForce()
+ext = AffineBodyPrismaticJointExternalForce()
 ext.apply_to(joint_mesh, 0.0)
 
 joint_object = scene.objects().create("prismatic_joint")

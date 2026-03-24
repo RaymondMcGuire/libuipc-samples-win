@@ -6,28 +6,24 @@ This library is a collection of sample programs that demonstrate how to use the 
 
 ## Install (uv recommended)
 
-### From PyPI
-
-Install all dependencies including `pyuipc` from PyPI:
+Install base dependencies (without `pyuipc`):
 
 ```bash
 uv sync
 ```
 
-> **Note:** The PyPI version of `pyuipc` only supports CUDA 12.8. If you need a different CUDA version, use the "Build from source" method below.
-
-### Build from source
-
-If you want to use a `pyuipc` built from source, first install only the other dependencies (without `pyuipc`):
+### pyuipc from PyPI
 
 ```bash
-uv sync --only-group dev
+uv sync --group pypi
 ```
 
-Then install your locally built `pyuipc` wheel:
+> **Note:** The PyPI version of `pyuipc` only supports CUDA 12.8. If you need a different CUDA version, use the "Build from source" method below.
+
+### pyuipc from source
+
+Build `pyuipc` following the [Libuipc documentation](https://spirimirror.github.io/libuipc-doc/build_install/), then install the wheel:
 
 ```bash
 uv pip install pyuipc-<version>.whl
 ```
-
-For build instructions, refer to the [Libuipc documentation](https://spirimirror.github.io/libuipc-doc/build_install/).

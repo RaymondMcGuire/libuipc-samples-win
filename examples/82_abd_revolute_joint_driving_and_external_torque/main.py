@@ -15,7 +15,7 @@ from uipc.constitution import (
     AffineBodyConstitution,
     AffineBodyDrivingRevoluteJoint,
     AffineBodyRevoluteJoint,
-    AffineBodyRevoluteJointExternalBodyForce,
+    AffineBodyRevoluteJointExternalForce,
 )
 from uipc.geometry import (
     SimplicialComplex,
@@ -88,7 +88,7 @@ revolute.apply_to(joint_mesh, [left_slot], [right_slot], 100.0)
 driving = AffineBodyDrivingRevoluteJoint()
 driving.apply_to(joint_mesh, 100.0)
 
-ext = AffineBodyRevoluteJointExternalBodyForce()
+ext = AffineBodyRevoluteJointExternalForce()
 ext.apply_to(joint_mesh, 0.0)
 
 joint_object = scene.objects().create("revolute_joint")
