@@ -1,23 +1,21 @@
 import numpy as np
 import polyscope as ps
-from polyscope import imgui
-
-from uipc import view
-from uipc import Scene, World, Engine, Transform, Vector3, Vector12, Animation, Logger, Timer
 import uipc.builtin as builtin
-from uipc.unit import MPa
-from uipc.geometry import SimplicialComplexIO, SimplicialComplex, label_surface, linemesh
-from uipc.geometry import affine_body
-from uipc.constitution import (AffineBodyConstitution, 
-                               AffineBodyRevoluteJoint, 
-                               AffineBodyPrismaticJoint, 
-                               ExternalArticulationConstraint, 
-                               NeoHookeanShell,
-                               DiscreteShellBending, 
-                               ElasticModuli2D)
-from uipc.unit import GPa, kPa
-from uipc.gui import SceneGUI
 from asset_dir import AssetDir
+from polyscope import imgui
+from uipc import Animation, Engine, Logger, Scene, Timer, Transform, Vector3, Vector12, World, view
+from uipc.constitution import (
+    AffineBodyConstitution,
+    AffineBodyPrismaticJoint,
+    AffineBodyRevoluteJoint,
+    DiscreteShellBending,
+    ElasticModuli2D,
+    ExternalArticulationConstraint,
+    NeoHookeanShell,
+)
+from uipc.geometry import SimplicialComplex, SimplicialComplexIO, affine_body, label_surface, linemesh
+from uipc.gui import SceneGUI
+from uipc.unit import GPa, MPa, kPa
 
 Timer.enable_all()
 Logger.set_level(Logger.Level.Info)
@@ -25,20 +23,20 @@ Logger.set_level(Logger.Level.Info)
 this_output_path = AssetDir.output_path(__file__)
 trimesh_path = AssetDir.trimesh_path()
 
-engine = Engine('cuda', this_output_path)
+engine = Engine("cuda", this_output_path)
 world = World(engine)
 
 dt = 0.01
 config = Scene.default_config()
-config['gravity'] = [[0.0], [-9.8], [0.0]]
-config['contact']['enable'] = True
+config["gravity"] = [[0.0], [-9.8], [0.0]]
+config["contact"]["enable"] = True
 
-config['newton']['velocity_tol'] = 0.1 # every low accuracy for interaction purpose
-config['newton']['transrate_tol'] = 10 
-config['linear_system']['tol_rate'] = 1e-4
-config['contact']['d_hat'] = 0.001
-config['collision_detection']['method'] = 'stackless_bvh'
-config['dt'] = dt
+config["newton"]["velocity_tol"] = 0.1  # every low accuracy for interaction purpose
+config["newton"]["transrate_tol"] = 10
+config["linear_system"]["tol_rate"] = 1e-4
+config["contact"]["d_hat"] = 0.001
+config["collision_detection"]["method"] = "stackless_bvh"
+config["dt"] = dt
 print(config)
 scene = Scene(config)
 
@@ -54,8 +52,8 @@ pre_transform = Transform.Identity()
 pre_transform.scale(0.4)
 io = SimplicialComplexIO(pre_transform)
 
-links = scene.objects().create('links')
-abd_mesh = io.read(f'{trimesh_path}/cube.obj')
+links = scene.objects().create("links")
+abd_mesh = io.read(f"{trimesh_path}/cube.obj")
 abd_mesh.instances().resize(3)
 label_surface(abd_mesh)
 abd.apply_to(abd_mesh, 100.0 * MPa)  # 100 MPa
@@ -84,7 +82,7 @@ is_fixed_view[2] = 0  # instance 2 not fixed
 
 # Create ref_dof_prev attribute
 # q vector: [translation(3), rotation_row0(3), rotation_row1(3), rotation_row2(3)]
-ref_dof_prev = abd_mesh.instances().create('ref_dof_prev', Vector12.Zero())
+ref_dof_prev = abd_mesh.instances().create("ref_dof_prev", Vector12.Zero())
 ref_dof_prev_view = view(ref_dof_prev)
 transform_view = view(abd_mesh.transforms())
 ref_dof_prev_view[:] = affine_body.transform_to_q(transform_view)  # Shape: (3, 12, 1)
@@ -97,13 +95,15 @@ external_kinetic_view[:] = 1
 
 geo_slot, rest_geo_slot = links.geometries().create(abd_mesh)
 
+
 # Animator to update ref_dof_prev
 def update_ref_dof_prev(info: Animation.UpdateInfo):
     geo: SimplicialComplex = info.geo_slots()[0].geometry()
-    ref_dof_prev = geo.instances().find('ref_dof_prev')
+    ref_dof_prev = geo.instances().find("ref_dof_prev")
     ref_dof_prev_view = view(ref_dof_prev)
     transform_view = view(geo.transforms())
     ref_dof_prev_view[:] = affine_body.transform_to_q(transform_view)
+
 
 scene.animator().insert(links, update_ref_dof_prev)
 
@@ -124,7 +124,7 @@ strength_ratios = [100.0]
 
 abrj.apply_to(joint_mesh, l_geo_slots, l_instance_id, r_geo_slots, r_instance_id, strength_ratios)
 
-joints = scene.objects().create('joints')
+joints = scene.objects().create("joints")
 revolute_joint_slots, rest_revolute_joint_slots = joints.geometries().create(joint_mesh)
 revolute_slot = revolute_joint_slots
 
@@ -143,7 +143,7 @@ r_instance_id = [2]
 strength_ratios = [100.0]
 abpj.apply_to(joint_mesh, l_geo_slots, l_instance_id, r_geo_slots, r_instance_id, strength_ratios)
 
-joints = scene.objects().create('joints_prismatic')
+joints = scene.objects().create("joints_prismatic")
 prismatic_joint_slots, rest_prismatic_joint_slots = joints.geometries().create(joint_mesh)
 prismatic_slot = prismatic_joint_slots
 
@@ -154,7 +154,7 @@ indices = [0, 0]
 articulation = eac.create_geometry(joint_geos, indices)
 
 # Set mass matrix
-mass = articulation['joint_joint'].find('mass')
+mass = articulation["joint_joint"].find("mass")
 print(articulation)
 # joint mass
 mass_00 = 1.2
@@ -167,16 +167,16 @@ mass_mat[0, 0] = mass_00
 mass_mat[0, 1] = mass_01
 mass_mat[1, 0] = mass_01
 mass_mat[1, 1] = mass_11
- 
+
 mass_view[:] = mass_mat.flatten()
 
 print(mass_mat.flatten())
 
-articulation_object = scene.objects().create('articulation_object')
+articulation_object = scene.objects().create("articulation_object")
 articulation_object.geometries().create(articulation)
 
 # GUI control variables
-delta_theta_tilde_0 = np.pi / 6.0 # revolute joint angular velocity
+delta_theta_tilde_0 = np.pi / 6.0  # revolute joint angular velocity
 delta_theta_tilde_1 = 0.0  # prismatic joint linear velocity
 
 
@@ -185,25 +185,26 @@ def update_articulation(info: Animation.UpdateInfo):
     dt = info.dt()
     geo_slots = info.geo_slots()
     geo = geo_slots[0].geometry()
-    
-    delta_theta_tilde = geo['joint'].find('delta_theta_tilde')
+
+    delta_theta_tilde = geo["joint"].find("delta_theta_tilde")
     delta_theta_view = view(delta_theta_tilde)
     delta_theta_view[0] = delta_theta_tilde_0 * dt
     delta_theta_view[1] = delta_theta_tilde_1 * dt
-    
-    mass = geo['joint_joint'].find('mass')
+
+    mass = geo["joint_joint"].find("mass")
     mass_view = view(mass)
     # symmetric matrix
     mass_view[:] = [mass_00, mass_01, mass_01, mass_11]
 
+
 scene.animator().insert(articulation_object, update_articulation)
 
 # Create cloth object
-cloth = scene.objects().create('cloth')
+cloth = scene.objects().create("cloth")
 t_cloth = Transform.Identity()
 t_cloth.scale(2.0)
 io_cloth = SimplicialComplexIO(t_cloth)
-cloth_mesh = io_cloth.read(f'{trimesh_path}/grid20x20.obj')
+cloth_mesh = io_cloth.read(f"{trimesh_path}/grid20x20.obj")
 label_surface(cloth_mesh)
 
 # Apply cloth constitutions
@@ -224,7 +225,7 @@ cloth.geometries().create(cloth_mesh)
 
 
 world.init(scene)
-sgui = SceneGUI(scene, 'split')
+sgui = SceneGUI(scene, "split")
 
 ps.init()
 ps.set_ground_plane_height(-1.0)
@@ -232,68 +233,46 @@ sgui.register()
 sgui.set_edge_width(1)
 
 run = False
+
+
 def on_update():
     global run, delta_theta_tilde_0, delta_theta_tilde_1, mass_00, mass_01, mass_11
-    
-    if imgui.Button('Run & Stop'):
+
+    if imgui.Button("Run & Stop"):
         run = not run
-    
+
     imgui.Separator()
-    imgui.Text('External Articulation Control')
-    imgui.Text('Adjust delta_theta_tilde values:')
-    
+    imgui.Text("External Articulation Control")
+    imgui.Text("Adjust delta_theta_tilde values:")
+
     # clear slider values every frame
     delta_theta_tilde_0 = 0.0
     delta_theta_tilde_1 = 0.0
-    
+
     changed0, delta_theta_tilde_0 = imgui.SliderFloat(
-        'Revolute Joint (rad/s)', 
-        delta_theta_tilde_0, 
-        -25 * np.pi * dt, 
-        25 * np.pi * dt
+        "Revolute Joint (rad/s)", delta_theta_tilde_0, -25 * np.pi * dt, 25 * np.pi * dt
     )
-    
+
     changed1, delta_theta_tilde_1 = imgui.SliderFloat(
-        'Prismatic Joint (m/s)', 
-        delta_theta_tilde_1, 
-        -25.0 * dt, 
-        25.0 * dt
+        "Prismatic Joint (m/s)", delta_theta_tilde_1, -25.0 * dt, 25.0 * dt
     )
-    
-    changed2, mass_00 = imgui.SliderFloat(
-        'Mass 00', 
-        mass_00, 
-        1e4, 
-        1e5
-    )
-        
-    changed4, mass_11 = imgui.SliderFloat(
-        'Mass 11', 
-        mass_11, 
-        1.0,
-        5.0
-    )
-    
-    changed3, mass_01 = imgui.SliderFloat(
-        'Mass 01', 
-        mass_01, 
-        1.0, 
-        5.0
-    )
-    
-    
-    
-    
+
+    changed2, mass_00 = imgui.SliderFloat("Mass 00", mass_00, 1e4, 1e5)
+
+    changed4, mass_11 = imgui.SliderFloat("Mass 11", mass_11, 1.0, 5.0)
+
+    changed3, mass_01 = imgui.SliderFloat("Mass 01", mass_01, 1.0, 5.0)
+
     imgui.Separator()
-    imgui.Text(f'Frame: {world.frame()}')
-    imgui.Text(f'Time: {world.frame() * dt:.2f}s')
-    
+    imgui.Text(f"Frame: {world.frame()}")
+    imgui.Text(f"Time: {world.frame() * dt:.2f}s")
+
     if run:
         world.advance()
         world.retrieve()
         sgui.update()
         Timer.report()
 
+
 ps.set_user_callback(on_update)
 ps.show()
-
