@@ -3,7 +3,8 @@ import numpy as np
 import polyscope as ps
 from polyscope import imgui
 
-from uipc import Logger, Timer, Transform, Vector3, AngleAxis, view, builtin
+from uipc import Logger, Timer, Transform, Vector3, AngleAxis, view
+import uipc.builtin as builtin
 from uipc.core import Engine, World, Scene
 from uipc.geometry import label_surface, ground, mesh_partition
 from uipc.geometry import SimplicialComplexIO

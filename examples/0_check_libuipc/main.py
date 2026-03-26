@@ -5,9 +5,9 @@ import asyncio
 from asset_dir import AssetDir
 
 import uipc
-from uipc import (Engine, Logger, 
-                  unit, builtin, dev,
-                  ResidentThread)
+from uipc import Engine, Logger, ResidentThread
+import uipc.unit as unit
+import uipc.dev as dev
 
 if __name__ == '__main__':
     print(f'pyuipc version: {uipc.__version__}')

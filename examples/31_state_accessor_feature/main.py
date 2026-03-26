@@ -3,7 +3,8 @@ import polyscope as ps
 from polyscope import imgui
 
 import uipc
-from uipc import Logger, Timer, Transform, Quaternion, Vector3, Vector2, view, builtin, Matrix4x4
+from uipc import Logger, Timer, Transform, Quaternion, Vector3, Vector2, view, Matrix4x4
+import uipc.builtin as builtin
 from uipc.core import (Engine, World, Scene, 
     AffineBodyStateAccessorFeature, FiniteElementStateAccessorFeature,
     SanityCheckResult)

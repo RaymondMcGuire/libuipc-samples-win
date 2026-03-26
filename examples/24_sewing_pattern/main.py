@@ -5,7 +5,8 @@ import polyscope as ps
 import trimesh as libtrimesh
 from asset_dir import AssetDir
 from polyscope import imgui
-from uipc import Logger, Timer, Vector3, builtin, view
+from uipc import Logger, Timer, Vector3, view
+import uipc.builtin as builtin
 from uipc.constitution import (
     DiscreteShellBending,
     ElasticModuli2D,

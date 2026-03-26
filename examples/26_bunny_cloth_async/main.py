@@ -3,7 +3,8 @@ import polyscope as ps
 from polyscope import imgui
 
 import uipc
-from uipc import Logger, Timer, Transform, Quaternion, Vector3, Vector2, view, builtin
+from uipc import Logger, Timer, Transform, Quaternion, Vector3, Vector2, view
+import uipc.builtin as builtin
 from uipc.core import Engine, World, Scene
 from uipc.geometry import tetmesh, label_surface, label_triangle_orient, flip_inward_triangles
 from uipc.geometry import SimplicialComplexIO

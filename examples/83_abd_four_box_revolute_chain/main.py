@@ -15,7 +15,9 @@ import numpy as np
 import polyscope as ps
 from asset_dir import AssetDir
 from polyscope import imgui
-from uipc import Animation, Engine, Logger, Matrix4x4, Scene, World, builtin, unit, view
+from uipc import Animation, Engine, Logger, Matrix4x4, Scene, World, view
+import uipc.builtin as builtin
+import uipc.unit as unit
 from uipc.constitution import (
     AffineBodyConstitution,
     AffineBodyDrivingRevoluteJoint,

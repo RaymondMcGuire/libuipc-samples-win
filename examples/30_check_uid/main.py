@@ -1,4 +1,4 @@
-from uipc import dev
+import uipc.dev as dev
 
 cuid_info = dev.ConstitutionUIDInfo()
 iuid_info = dev.ImplicitGeometryUIDInfo()
