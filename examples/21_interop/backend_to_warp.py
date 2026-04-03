@@ -90,15 +90,22 @@ world.init(scene)
 # --- ABD state accessor ---
 abd_state_accessor: AffineBodyStateAccessorFeature = world.features().find(AffineBodyStateAccessorFeature)  # ty:ignore[invalid-assignment]
 assert abd_state_accessor is not None, "ABD state accessor not found"
-abd_transform_wp = uipc.adapter.warp.from_buffer_view(abd_state_accessor.transform_buffer(), wp.mat44d)
-abd_velocity_wp = uipc.adapter.warp.from_buffer_view(abd_state_accessor.velocity_buffer(), wp.mat44d)
+abd_body_count = 2  # abd_upper + abd_lower
+abd_transform_wp = uipc.adapter.warp.buffer(abd_body_count, dtype=wp.mat44d, device="cuda")
+abd_velocity_wp = uipc.adapter.warp.buffer(abd_body_count, dtype=wp.mat44d, device="cuda")
+abd_state_accessor.copy_transform_to(abd_transform_wp.buffer_view())
+abd_state_accessor.copy_velocity_to(abd_velocity_wp.buffer_view())
+
 print("ABD transform:", abd_transform_wp.warp(), abd_transform_wp.warp().device)
 print("ABD velocity:", abd_velocity_wp.warp(), abd_velocity_wp.warp().device)
 
 # --- FEM state accessor ---
 fem_state_accessor: FiniteElementStateAccessorFeature = world.features().find(FiniteElementStateAccessorFeature)  # ty:ignore[invalid-assignment]
 assert fem_state_accessor is not None, "FEM state accessor not found"
-fem_position_wp = uipc.adapter.warp.from_buffer_view(fem_state_accessor.position_buffer(), wp.vec3d)
-fem_velocity_wp = uipc.adapter.warp.from_buffer_view(fem_state_accessor.velocity_buffer(), wp.vec3d)
+fem_body_count = len(Vs)  # 4 vertices
+fem_position_wp = uipc.adapter.warp.buffer(fem_body_count, dtype=wp.vec3d, device="cuda")
+fem_velocity_wp = uipc.adapter.warp.buffer(fem_body_count, dtype=wp.vec3d, device="cuda")
+fem_state_accessor.copy_position_to(fem_position_wp.buffer_view())
+fem_state_accessor.copy_velocity_to(fem_velocity_wp.buffer_view())
 print("FEM position:", fem_position_wp.warp(), fem_position_wp.warp().device)
 print("FEM velocity:", fem_velocity_wp.warp(), fem_velocity_wp.warp().device)
