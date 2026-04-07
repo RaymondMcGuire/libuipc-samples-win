@@ -101,51 +101,39 @@ joint_object.geometries().create(joint_mesh)
 def animate_joint(info: Animation.UpdateInfo) -> None:
     motor_speed = 1.5
     for geo_slot in info.geo_slots():
-        if geo_slot is None:
-            continue
-        geo = geo_slot.geometry()
-        if geo is None:
-            continue
+        geo: SimplicialComplex = geo_slot.geometry()
 
         angles = geo.edges().find("angle")
-        if angles is None:
-            continue
         angles_view = view(angles)
 
         driving_phase = info.frame() < 100
 
         drv_ic = geo.edges().find("driving/is_constrained")
         view(drv_ic)[:] = 0
-        # if drv_ic is not None:
-        #     view(drv_ic)[:] = 1 if driving_phase else 0
 
         ext_ic = geo.edges().find("external_torque/is_constrained")
-        view(ext_ic)[:] = 0
-        # if ext_ic is not None:
-        #     view(ext_ic)[:] = 0 if driving_phase else 1
+        view(ext_ic)[:] = 0 if driving_phase else 1
 
-        # aim_angle = geo.edges().find("aim_angle")
-        # aim0 = float(view(aim_angle)[0]) if aim_angle is not None else 0.0
-        # if aim_angle is not None and driving_phase:
-        #     view(aim_angle)[:] = angles_view + info.dt() * motor_speed
-        #     aim0 = float(view(aim_angle)[0])
+        aim_angle = geo.edges().find("aim_angle")
+        aim0 = float(view(aim_angle)[0]) if aim_angle is not None else 0.0
+        if aim_angle is not None and driving_phase:
+            view(aim_angle)[:] = angles_view + info.dt() * motor_speed
+            aim0 = float(view(aim_angle)[0])
 
-        # ext_attr = geo.edges().find("external_torque")
-        # ext0 = 0.0
-        # if ext_attr is not None:
-        #     if driving_phase:
-        #         view(ext_attr)[:] = 0.0
-        #     else:
-        #         k = int(info.frame()) - 100
-        #         ext0 = 1000 if k < 10 else -1000
-        #         view(ext_attr)[:] = ext0
+        ext_attr = geo.edges().find("external_torque")
+        ext0 = 0.0
+        if driving_phase:
+            view(ext_attr)[:] = 0.0
+        else:
+            ext0 = 1000 if info.frame() <= 150 else -1000
+            view(ext_attr)[:] = ext0
 
-        # phase = "driving" if driving_phase else "external"
-        # print(
-        #     f"Frame {info.frame()} phase={phase} "
-        #     f"aim_angle[0]={aim0:.4f} angle[0]={float(angles_view[0]):.4f} rad "
-        #     f"ext_torque[0]={ext0:.2f}"
-        # )
+        phase = "driving" if driving_phase else "external"
+        print(
+            f"Frame {info.frame()} phase={phase} "
+            f"aim_angle[0]={aim0:.4f} angle[0]={float(angles_view[0]):.4f} rad "
+            f"ext_torque[0]={ext0:.2f}"
+        )
 
 
 scene.animator().insert(joint_object, animate_joint)
@@ -165,7 +153,7 @@ def on_update():
     if imgui.Button("run & stop"):
         run = not run
 
-    if run and world.frame() < 1:
+    if run and world.frame() < 200:
         world.advance()
         world.retrieve()
         sgui.update()

@@ -103,33 +103,25 @@ joint_object.geometries().create(joint_mesh)
 
 def animate_joint(info: Animation.UpdateInfo) -> None:
     for geo_slot in info.geo_slots():
-        if geo_slot is None:
-            continue
-        geo = geo_slot.geometry()
-        if geo is None:
-            continue
+        geo: SimplicialComplex = geo_slot.geometry()
 
         distances = geo.edges().find("distance")
-        if distances is None:
-            continue
         distances_view = view(distances)
 
         driving_phase = info.frame() <= 100
 
         # Toggle driving constraint
         drv_ic = geo.edges().find("driving/is_constrained")
-        if drv_ic is not None:
-            view(drv_ic)[:] = 1 if driving_phase else 0
+        view(drv_ic)[:] = 1 if driving_phase else 0
 
         # Toggle external force constraint
         ext_ic = geo.edges().find("external_force/is_constrained")
-        if ext_ic is not None:
-            view(ext_ic)[:] = 0 if driving_phase else 1
+        view(ext_ic)[:] = 0 if driving_phase else 1
 
         # Driving: set aim_distance based on velocity
         aim_dist = geo.edges().find("aim_distance")
-        aim0 = float(view(aim_dist)[0]) if aim_dist is not None else 0.0
-        if aim_dist is not None and driving_phase:
+        aim0 = float(view(aim_dist)[0])
+        if driving_phase:
             velocity = -10.0 if info.frame() <= 50 else 10.0
             view(aim_dist)[:] = distances_view + info.dt() * velocity
             aim0 = float(view(aim_dist)[0])
@@ -137,12 +129,11 @@ def animate_joint(info: Animation.UpdateInfo) -> None:
         # External force
         ext_attr = geo.edges().find("external_force")
         ext0 = 0.0
-        if ext_attr is not None:
-            if driving_phase:
-                view(ext_attr)[:] = 0.0
-            else:
-                ext0 = -1000.0 if info.frame() <= 150 else 1000.0
-                view(ext_attr)[:] = ext0
+        if driving_phase:
+            view(ext_attr)[:] = 0.0
+        else:
+            ext0 = 1000.0 if info.frame() <= 150 else -1000.0
+            view(ext_attr)[:] = ext0
 
         phase = "driving" if driving_phase else "external"
         print(
