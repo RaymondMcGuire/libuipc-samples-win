@@ -16,14 +16,14 @@ Logger.set_level(Logger.Level.Warn)
 output_path = AssetDir.output_path(__file__)
 
 
-engine = Engine('cuda', output_path)
+engine = Engine("cuda", output_path)
 world = World(engine)
 
 config = Scene.default_config()
 dt = 0.02
-config['dt'] = dt
-config['contact']['d_hat'] = 0.05
-config['newton']['velocity_tol'] = 0.1
+config["dt"] = dt
+config["contact"]["d_hat"] = 0.05
+config["newton"]["velocity_tol"] = 0.1
 scene = Scene(config)
 
 # friction ratio and contact resistance
@@ -41,7 +41,7 @@ def process_surface(sc: SimplicialComplex):
     return sc
 
 io = SimplicialComplexIO()
-cube_mesh = io.read(f'{AssetDir.trimesh_path()}/cube.obj')
+cube_mesh = io.read(f"{AssetDir.trimesh_path()}/cube.obj")
 cube_mesh = process_surface(cube_mesh)
 
 # move the cube up for 2.5 meters
@@ -54,14 +54,14 @@ abd.apply_to(cube_mesh, 1e8) # 100 MPa
 default_element.apply_to(cube_mesh)
 # constraint the rotation
 rm.apply_to(cube_mesh, 100, motor_rot_vel=np.pi)
-cube_object = scene.objects().create('cube')
+cube_object = scene.objects().create("cube")
 cube_object.geometries().create(cube_mesh)
 
 pre_transform = Transform.Identity()
 pre_transform.scale(Vector3.Values([3, 0.1, 6]))
 
 io = SimplicialComplexIO(pre_transform)
-ground_mesh = io.read(f'{AssetDir.tetmesh_path()}/cube.msh')
+ground_mesh = io.read(f"{AssetDir.tetmesh_path()}/cube.msh")
 ground_mesh = process_surface(ground_mesh)
 ground_mesh.instances().resize(2)
 
@@ -80,7 +80,7 @@ trans_view[0] = t.matrix()
 t.translate(Vector3.UnitZ() * -2.5 + Vector3.UnitY() * 1)
 trans_view[1] = t.matrix()
 
-ground_object = scene.objects().create('ground')
+ground_object = scene.objects().create("ground")
 ground_object.geometries().create(ground_mesh)
 
 ground_height = -1.0
@@ -126,7 +126,7 @@ animator.insert(cube_object, cube_animation)
 animator.insert(ground_object, ground_animation)
 
 world.init(scene)
-sgui = SceneGUI(scene, 'split')
+sgui = SceneGUI(scene, "split")
 
 ps.init()
 ps.set_ground_plane_height(ground_height)
@@ -136,7 +136,7 @@ sgui.set_edge_width(1)
 run = False
 def on_update():
     global run
-    if(imgui.Button('run & stop')):
+    if(imgui.Button("run & stop")):
         run = not run
 
     if(run):

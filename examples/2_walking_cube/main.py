@@ -16,14 +16,14 @@ from asset_dir import AssetDir
 Logger.set_level(Logger.Level.Info)
 Timer.enable_all()
 workspace = AssetDir.output_path(__file__)
-engine = Engine('cuda', workspace)
+engine = Engine("cuda", workspace)
 world = World(engine)
 
 config = Scene.default_config()
 dt = 0.02
-config['dt'] = dt
-config['gravity'] = [[0.0], [-9.8], [0.0]]
-config['contact']['friction']['enable'] = True
+config["dt"] = dt
+config["gravity"] = [[0.0], [-9.8], [0.0]]
+config["contact"]["friction"]["enable"] = True
 scene = Scene(config)
 
 # friction ratio and contact resistance
@@ -36,14 +36,14 @@ rm = RotatingMotor()
 
 # load cube mesh
 io = SimplicialComplexIO()
-cube_mesh = io.read(f'{AssetDir.tetmesh_path()}/cube.msh')
+cube_mesh = io.read(f"{AssetDir.tetmesh_path()}/cube.msh")
 # label the surface, enable the contact
 label_surface(cube_mesh)
 # label the triangle orientation to export the correct surface mesh
 label_triangle_orient(cube_mesh)
 cube_mesh = flip_inward_triangles(cube_mesh)
 
-cube_object = scene.objects().create('cube_obj')
+cube_object = scene.objects().create("cube_obj")
 
 abd.apply_to(cube_mesh, 10.0 * MPa)
 rm.apply_to(
@@ -61,7 +61,7 @@ trans_view[0] = t.matrix()
 
 cube_object.geometries().create(cube_mesh)
 
-ground_obj = scene.objects().create('ground')
+ground_obj = scene.objects().create("ground")
 g = ground()
 ground_obj.geometries().create(g)
 
@@ -94,7 +94,7 @@ tri_surf.set_edge_width(1)
 run = False
 def on_update():
     global run
-    if(imgui.Button('run & stop')):
+    if(imgui.Button("run & stop")):
         run = not run
 
     if(run):

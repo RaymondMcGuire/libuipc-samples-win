@@ -210,7 +210,7 @@ world.init(scene)
 sio = SceneIO(scene)
 
 ps.init()
-sgui = SceneGUI(scene, 'split')
+sgui = SceneGUI(scene, "split")
 sgui.register()
 sgui.set_edge_width(1.0)
 
@@ -230,16 +230,16 @@ run = False
 save_frames = False
 def on_update():
     global run, save_frames
-    if(imgui.Button('run & stop')):
+    if(imgui.Button("run & stop")):
         run = not run
     
     imgui.SameLine()
-    if(imgui.Button('save frame')):
+    if(imgui.Button("save frame")):
         write_to_disk(world.frame())
         print(f"Frame {world.frame()} saved.")
     
     imgui.SameLine()
-    changed , value = imgui.Checkbox('auto save', save_frames)
+    changed , value = imgui.Checkbox("auto save", save_frames)
     if changed:
         save_frames = value
         

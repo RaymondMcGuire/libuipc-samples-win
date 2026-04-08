@@ -15,15 +15,15 @@ Logger.set_level(Logger.Level.Warn)
 tetmesh_dir = AssetDir.tetmesh_path()
 this_output_path = AssetDir.output_path(__file__)
 
-engine = Engine('cuda', this_output_path)
+engine = Engine("cuda", this_output_path)
 world = World(engine)
 
 config = Scene.default_config()
 
 # Disable built-in gravity since we're using external force
-config['gravity'] = [[0.0], [0.0], [0.0]]
-config['contact']['enable'] = False
-config['dt'] = 0.005
+config["gravity"] = [[0.0], [0.0], [0.0]]
+config["contact"]["enable"] = False
+config["dt"] = 0.005
 scene = Scene(config)
 
 # Create constitutions
@@ -39,7 +39,7 @@ pre_trans = Transform.Identity()
 pre_trans.scale(0.2)
 
 io = SimplicialComplexIO(pre_trans)
-cube = io.read(f'{tetmesh_dir}/cube.msh')
+cube = io.read(f"{tetmesh_dir}/cube.msh")
 
 # Process surface
 label_surface(cube)
@@ -47,7 +47,7 @@ label_triangle_orient(cube)
 cube_processed = flip_inward_triangles(cube)
 
 # Create object with single cube
-cube_object = scene.objects().create('cube')
+cube_object = scene.objects().create("cube")
 
 cube_processed.instances().resize(1)
 
@@ -85,7 +85,7 @@ def animate_cube(info: Animation.UpdateInfo):
     force = np.zeros(12)
     force[0:3] = force_3d
     
-    force_attr = geo.instances().find('external_force')
+    force_attr = geo.instances().find("external_force")
     force_view = view(force_attr)
     force_view[:] = force.reshape(-1, 1)
 
@@ -94,7 +94,7 @@ scene.animator().insert(cube_object, animate_cube)
 world.init(scene)
 world.dump()
 
-sgui = SceneGUI(scene, 'split')
+sgui = SceneGUI(scene, "split")
 
 ps.init()
 ps.set_ground_plane_height(0)
@@ -104,7 +104,7 @@ sgui.set_edge_width(1)
 run = False
 def on_update():
     global run
-    if(imgui.Button('run & stop')):
+    if(imgui.Button("run & stop")):
         run = not run
     
     if(run):

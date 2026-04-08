@@ -17,10 +17,10 @@ folder = AssetDir.folder(__file__)
 engine = Engine("cuda", workspace=workspace)
 world = World(engine)
 
-scene = SceneIO.load(f'{folder}/scene.json')
+scene = SceneIO.load(f"{folder}/scene.json")
 
 world.init(scene)
-sgui = SceneGUI(scene, 'split')
+sgui = SceneGUI(scene, "split")
 
 Logger.set_level(Logger.Level.Warn)
 
@@ -31,7 +31,7 @@ sgui.set_edge_width(1)
 run = False
 def on_update():
     global run
-    if(imgui.Button('run & stop')):
+    if(imgui.Button("run & stop")):
         run = not run
         
     if(run):

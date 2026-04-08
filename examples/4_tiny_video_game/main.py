@@ -23,12 +23,12 @@ class IO:
     
     @staticmethod
     def movement():
-        w = 1.0 if IO.is_key_down('W') else 0.0
-        s = -1.0 if IO.is_key_down('S') else 0.0
-        d = 1.0 if IO.is_key_down('D') else 0.0
-        a = -1.0 if IO.is_key_down('A') else 0.0
-        e = 1.0 if IO.is_key_down('E') else 0.0
-        q = -1.0 if IO.is_key_down('Q') else 0.0
+        w = 1.0 if IO.is_key_down("W") else 0.0
+        s = -1.0 if IO.is_key_down("S") else 0.0
+        d = 1.0 if IO.is_key_down("D") else 0.0
+        a = -1.0 if IO.is_key_down("A") else 0.0
+        e = 1.0 if IO.is_key_down("E") else 0.0
+        q = -1.0 if IO.is_key_down("Q") else 0.0
         V = Vector3.Values([a+d, e+q, -(w+s)])
         # print(V)
         return V
@@ -37,13 +37,13 @@ class IO:
 tetmesh_path = AssetDir.tetmesh_path()
 workspace = AssetDir.output_path(__file__)
 
-engine = Engine('cuda', workspace)
+engine = Engine("cuda", workspace)
 world = World(engine)
 
 config = Scene.default_config()
 dt = 0.01
-config['dt'] = dt
-config['newton']['max_iter'] = 5
+config["dt"] = dt
+config["newton"]["max_iter"] = 5
 print(config)
 scene = Scene()
 
@@ -59,11 +59,11 @@ scene.contact_tabular().default_model(0.1, 1e9)
 default_element = scene.contact_tabular().default_element()
 
 # load a cube
-cube_obj = scene.objects().create('board')
+cube_obj = scene.objects().create("board")
 t = Transform.Identity()
 t.scale([3, 0.1, 3])
 io = SimplicialComplexIO(t)
-cube = io.read(f'{tetmesh_path}/cube.msh')
+cube = io.read(f"{tetmesh_path}/cube.msh")
 label_surface(cube)
 label_triangle_orient(cube)
 cube = flip_inward_triangles(cube)
@@ -80,7 +80,7 @@ is_fixed_view[0] = 1
 cube_obj.geometries().create(cube)
 
 # create a particle
-particle_obj = scene.objects().create('particle')
+particle_obj = scene.objects().create("particle")
 Vs = np.array([[0, 1.5, 0]])
 particle = pointcloud(Vs)
 label_surface(particle)
@@ -90,7 +90,7 @@ spc.apply_to(particle)
 particle_obj.geometries().create(particle)
 
 # create a rope
-rope_obj = scene.objects().create('rope')
+rope_obj = scene.objects().create("rope")
 Vs = np.array([[-0.4, 1.5, -1], [0.0, 1.5, -1], [0.4, 1.5, -1],[0.8, 1.5, -1]])
 Es = np.array([[0, 1], [1, 2], [2, 3]])
 rope = linemesh(Vs, Es)
@@ -100,7 +100,7 @@ default_element.apply_to(rope)
 rope_geo_slot, _ = rope_obj.geometries().create(rope)
 
 # create a ground
-ground_obj = scene.objects().create('ground')
+ground_obj = scene.objects().create("ground")
 ground_height = -0.5
 g = ground(ground_height)
 ground_obj.geometries().create(g)
@@ -145,15 +145,15 @@ def update():
     global run
     global Win
     global UsingTime
-    if(imgui.Button('Run & Stop')):
+    if(imgui.Button("Run & Stop")):
         run = not run
-    imgui.Text('W, A, S, D, E, Q to move the particle')
-    imgui.Text('Push the rope to the ground to win!')
+    imgui.Text("W, A, S, D, E, Q to move the particle")
+    imgui.Text("Push the rope to the ground to win!")
     if(Win):
-        imgui.Text(f'You Win in {UsingTime:.2f}s !')
+        imgui.Text(f"You Win in {UsingTime:.2f}s !")
     else:
         UsingTime = world.frame() * dt
-        imgui.Text(f'{UsingTime:.2f}s')
+        imgui.Text(f"{UsingTime:.2f}s")
     
     if run:
         world.advance()

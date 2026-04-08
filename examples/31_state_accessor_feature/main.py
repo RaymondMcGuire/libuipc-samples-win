@@ -24,16 +24,16 @@ this_folder = AssetDir.folder(__file__)
 trimesh_path = AssetDir.trimesh_path()
 tetmesh_path = AssetDir.tetmesh_path()
 
-engine = Engine('cuda', workspace)
+engine = Engine("cuda", workspace)
 world = World(engine)
 
 config = Scene.default_config()
 print(config)
 scene = Scene(config)
 
-obj = scene.objects().create('cubes')
+obj = scene.objects().create("cubes")
 sio = SimplicialComplexIO()
-base_mesh = sio.read(f'{tetmesh_path}/cube.msh')
+base_mesh = sio.read(f"{tetmesh_path}/cube.msh")
 
 label_surface(base_mesh)
 label_triangle_orient(base_mesh)
@@ -56,7 +56,7 @@ trans_view[:] = t.matrix()
 obj.geometries().create(fem_mesh)
 obj.geometries().create(abd_mesh)
 
-g = scene.objects().create('ground')
+g = scene.objects().create("ground")
 g_mesh = ground(-0.6)
 g.geometries().create(g_mesh)
 
@@ -67,7 +67,7 @@ world.dump()
 abd_state_accessor:AffineBodyStateAccessorFeature = world.features().find(AffineBodyStateAccessorFeature)
 fem_state_accessor:FiniteElementStateAccessorFeature = world.features().find(FiniteElementStateAccessorFeature)
 
-assert abd_state_accessor is not None and fem_state_accessor is not None, 'This version of uipc does not support state accessor feature.'
+assert abd_state_accessor is not None and fem_state_accessor is not None, "This version of uipc does not support state accessor feature."
 
 # 2) Create a state_geo to contain data
 abd_state_geo = abd_state_accessor.create_geometry()
@@ -78,7 +78,7 @@ fem_positions = fem_state_geo.vertices().create(builtin.position, Vector3.Zero()
 fem_velocities = fem_state_geo.vertices().create(builtin.velocity, Vector3.Zero()) # tell the backend we need velocity information
 
 ps.init()
-sgui = SceneGUI(scene, 'split')
+sgui = SceneGUI(scene, "split")
 sgui.register()
 sgui.set_edge_width(1.0)
 
@@ -147,23 +147,23 @@ class StateAccessorInspector:
         changed_abd = False
         changed_fem = False
 
-        if imgui.CollapsingHeader('State Accessor Data'):
-            imgui.Text(f'ABD instances: {abd_transforms.shape[0]}')
-            if imgui.TreeNode('ABD transforms & velocities'):
+        if imgui.CollapsingHeader("State Accessor Data"):
+            imgui.Text(f"ABD instances: {abd_transforms.shape[0]}")
+            if imgui.TreeNode("ABD transforms & velocities"):
                 for i in range(abd_transforms.shape[0]):
-                    if imgui.TreeNode(f'ABD instance {i}'):
-                        changed_abd |= self._draw_matrix4x4('transform', abd_transforms[i])
-                        changed_abd |= self._draw_matrix4x4('velocity', abd_velocities[i])
+                    if imgui.TreeNode(f"ABD instance {i}"):
+                        changed_abd |= self._draw_matrix4x4("transform", abd_transforms[i])
+                        changed_abd |= self._draw_matrix4x4("velocity", abd_velocities[i])
                         imgui.TreePop()
                 imgui.TreePop()
 
             imgui.Separator()
-            imgui.Text(f'FEM vertices: {fem_positions.shape[0]}')
-            if imgui.TreeNode('FEM positions & velocities'):
+            imgui.Text(f"FEM vertices: {fem_positions.shape[0]}")
+            if imgui.TreeNode("FEM positions & velocities"):
                 for i in range(fem_positions.shape[0]):
-                    if imgui.TreeNode(f'FEM vertex {i}'):
-                        changed_fem |= self._draw_vector3('position', fem_positions[i])
-                        changed_fem |= self._draw_vector3('velocity', fem_velocities[i])
+                    if imgui.TreeNode(f"FEM vertex {i}"):
+                        changed_fem |= self._draw_vector3("position", fem_positions[i])
+                        changed_fem |= self._draw_vector3("velocity", fem_velocities[i])
                         imgui.TreePop()
                 imgui.TreePop()
 
@@ -188,7 +188,7 @@ state_inspector = StateAccessorInspector(
 def on_update():
     global run
     
-    if(imgui.Button('run & stop')):
+    if(imgui.Button("run & stop")):
         run = not run
     
     moved = state_inspector.draw()

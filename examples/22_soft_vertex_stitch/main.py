@@ -17,14 +17,14 @@ from asset_dir import AssetDir
 Logger.set_level(Logger.Level.Warn)
 
 workspace = AssetDir.output_path(__file__)
-engine = Engine('cuda', workspace)
+engine = Engine("cuda", workspace)
 world = World(engine)
 
 config = Scene.default_config()
 dt = 0.02
-config['dt'] = dt
-config['gravity'] = [[0.0], [-9.8], [0.0]]
-config['contact']['friction']['enable'] = True
+config["dt"] = dt
+config["gravity"] = [[0.0], [-9.8], [0.0]]
+config["contact"]["friction"]["enable"] = True
 scene = Scene(config)
 
 # friction ratio and contact resistance
@@ -37,7 +37,7 @@ snk = StableNeoHookean()
 
 # load cube mesh
 io = SimplicialComplexIO()
-cube_mesh = io.read(f'{AssetDir.tetmesh_path()}/cube.msh')
+cube_mesh = io.read(f"{AssetDir.tetmesh_path()}/cube.msh")
 # label the surface, enable the contact
 label_surface(cube_mesh)
 # label the triangle orientation to export the correct surface mesh
@@ -47,7 +47,7 @@ cube_mesh = flip_inward_triangles(cube_mesh)
 geo_slot_list:list[GeometrySlot] = []
 
 # ABD
-abd_cube_obj = scene.objects().create('abd')
+abd_cube_obj = scene.objects().create("abd")
 abd_mesh = cube_mesh.copy()
 abd.apply_to(abd_mesh, 10.0 * MPa)
 t = Transform.Identity()
@@ -59,13 +59,13 @@ abd_geo_slot, abd_rest_geo_slot = abd_cube_obj.geometries().create(abd_mesh)
 geo_slot_list.append(abd_geo_slot)
 
 # FEM
-fem_cube_obj = scene.objects().create('fem')
+fem_cube_obj = scene.objects().create("fem")
 fem_mesh = cube_mesh.copy()
 snk.apply_to(fem_mesh)
 fem_geo_slot, fem_rest_geo_slot = fem_cube_obj.geometries().create(fem_mesh)
 geo_slot_list.append(fem_geo_slot)
 
-stitch_obj = scene.objects().create('stitch')
+stitch_obj = scene.objects().create("stitch")
 svs = SoftVertexStitch()
 stitch_Vs = np.array([
     [4,1]
@@ -74,14 +74,14 @@ stitch_geo = svs.create_geometry((abd_geo_slot, fem_geo_slot), stitch_Vs)
 stitch_obj.geometries().create(stitch_geo)
 
 ground_height = -2.0
-ground_obj = scene.objects().create('ground')
+ground_obj = scene.objects().create("ground")
 g = ground(ground_height)
 g_geo_slot, g_rest_geo_slot = ground_obj.geometries().create(g)
 geo_slot_list.append(g_geo_slot)
 
 world.init(scene)
 
-sgui = SceneGUI(scene, 'split')
+sgui = SceneGUI(scene, "split")
 
 ps.init()
 sgui.register()
@@ -92,16 +92,16 @@ def on_update():
     global run
     global geo_slot_list
 
-    if(imgui.Button('run & stop')):
+    if(imgui.Button("run & stop")):
         run = not run
     
     for geo_slot in geo_slot_list:
         geo = geo_slot.geometry()
         gvo = geo.meta().find(builtin.global_vertex_offset)
         if gvo is not None:
-            imgui.Text(f'[{geo_slot.id()}] Global Vertex Offset: {gvo.view()}')
+            imgui.Text(f"[{geo_slot.id()}] Global Vertex Offset: {gvo.view()}")
         else:
-            imgui.Text(f'[{geo_slot.id()}] This version dont support global vertex offset!')
+            imgui.Text(f"[{geo_slot.id()}] This version dont support global vertex offset!")
     
     if(run):
         world.advance()

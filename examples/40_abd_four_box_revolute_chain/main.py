@@ -29,7 +29,6 @@ from uipc.geometry import (
     flip_inward_triangles,
     label_surface,
     label_triangle_orient,
-    linemesh,
 )
 from uipc.gui import SceneGUI
 
@@ -116,13 +115,11 @@ joint_meshes = []
 
 # Joint 0: anchor -> box_0
 anchor_pos = np.array([-SPACING, 0.0, 0.0], dtype=np.float32)
-v0 = anchor_pos
-v1 = v0 + AXIS_DIR
-anchor_joint_mesh = linemesh(
-    np.array([v0, v1], dtype=np.float32),
-    np.array([[0, 1]], dtype=np.int32),
+anchor_joint_mesh = revolute_joint.create_geometry(
+    np.array([anchor_pos], dtype=np.float32),
+    np.array([anchor_pos + AXIS_DIR], dtype=np.float32),
+    [anchor_slot], [0], [box_slots[0]], [0], [100.0],
 )
-revolute_joint.apply_to(anchor_joint_mesh, [anchor_slot], [box_slots[0]], 100.0)
 driving.apply_to(anchor_joint_mesh, 100.0)
 anchor_joint_obj = scene.objects().create("joint_anchor_0")
 anchor_joint_obj.geometries().create(anchor_joint_mesh)
@@ -132,13 +129,11 @@ joint_meshes.append(anchor_joint_mesh)
 # Joints between adjacent boxes
 for i in range(NUM_BOXES - 1):
     body_i_pos = np.array([i * SPACING, 0.0, 0.0], dtype=np.float32)
-    v0 = body_i_pos
-    v1 = v0 + AXIS_DIR
-    joint_mesh = linemesh(
-        np.array([v0, v1], dtype=np.float32),
-        np.array([[0, 1]], dtype=np.int32),
+    joint_mesh = revolute_joint.create_geometry(
+        np.array([body_i_pos], dtype=np.float32),
+        np.array([body_i_pos + AXIS_DIR], dtype=np.float32),
+        [box_slots[i]], [0], [box_slots[i + 1]], [0], [100.0],
     )
-    revolute_joint.apply_to(joint_mesh, [box_slots[i]], [box_slots[i + 1]], 100.0)
     driving.apply_to(joint_mesh, 100.0)
 
     joint_obj = scene.objects().create(f"joint_{i}_{i + 1}")

@@ -21,14 +21,14 @@ output_path = AssetDir.output_path(this_folder)
 
 # --------------------------------------------------------
 # load from bson (binary json)
-scene = SceneIO.load(f'{output_path}/scene/scene0.bson')
+scene = SceneIO.load(f"{output_path}/scene/scene0.bson")
 # OR use:
 # SceneIO.from_json(...)
 # to load the scene from a json
 # --------------------------------------------------------
 
 scene_io = SceneIO(scene)
-sgui = SceneGUI(scene, 'split')
+sgui = SceneGUI(scene, "split")
 
 ps.init()
 sgui.register()
@@ -40,16 +40,16 @@ def on_update():
     global run
     global frame
     
-    path = f'{output_path}/scene/scene{frame}.bson'
+    path = f"{output_path}/scene/scene{frame}.bson"
     
-    if(imgui.Button('run & stop')):
+    if(imgui.Button("run & stop")):
         run = not run
     
     if(not pl.Path(path).exists()):
         run = False
 
     if(run):
-        print(f'load update from {path}')
+        print(f"load update from {path}")
         
         # -----------------------------------------
         # update from the scene commit files

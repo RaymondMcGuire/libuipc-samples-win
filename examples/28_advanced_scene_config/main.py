@@ -19,7 +19,7 @@ workspace = AssetDir.output_path(__file__)
 this_folder = AssetDir.folder(__file__)
 trimesh_path = AssetDir.trimesh_path()
 
-engine = Engine('cuda', workspace)
+engine = Engine("cuda", workspace)
 world = World(engine)
 
 # -----------------------------------------------------------------------------
@@ -28,9 +28,9 @@ world = World(engine)
 scene = Scene()
 # setup config after scene is created
 config = scene.config()
-dt_attr = config.find('dt')
+dt_attr = config.find("dt")
 view(dt_attr)[:] = 0.03
-friction_enable = config.find('contact/friction/enable')
+friction_enable = config.find("contact/friction/enable")
 view(friction_enable)[:] = 1
 
 print(config)
@@ -39,23 +39,23 @@ print(config)
 
 abd = AffineBodyConstitution()
 
-obj = scene.objects().create('cubes')
+obj = scene.objects().create("cubes")
 t = Transform.Identity()
 t.scale(0.10)
 sio = SimplicialComplexIO(t)
-cube_mesh = sio.read(f'{trimesh_path}/cube.obj')
+cube_mesh = sio.read(f"{trimesh_path}/cube.obj")
 abd.apply_to(cube_mesh, 100.0 * MPa)
 label_surface(cube_mesh)
 obj.geometries().create(cube_mesh)
 
-g = scene.objects().create('ground')
+g = scene.objects().create("ground")
 g_mesh = ground(-0.15)
 g.geometries().create(g_mesh)
 
 world.init(scene)
 
 ps.init()
-sgui = SceneGUI(scene, 'split')
+sgui = SceneGUI(scene, "split")
 sgui.register()
 sgui.set_edge_width(1.0)
 
@@ -63,7 +63,7 @@ run = False
 def on_update():
     global run
     
-    if(imgui.Button('run & stop')):
+    if(imgui.Button("run & stop")):
         run = not run
 
     if(run):

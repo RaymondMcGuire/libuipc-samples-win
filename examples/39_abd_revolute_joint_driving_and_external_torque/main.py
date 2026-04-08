@@ -25,7 +25,6 @@ from uipc.geometry import (
     flip_inward_triangles,
     label_surface,
     label_triangle_orient,
-    linemesh,
 )
 from uipc.gui import SceneGUI
 
@@ -79,14 +78,12 @@ view(right_mesh.instances().find(builtin.is_fixed))[0] = 0
 left_slot = left_link.geometries().create(left_mesh)[0]
 right_slot = right_link.geometries().create(right_mesh)[0]
 
-joint_mesh = linemesh(
-    np.array([[0.0, 0.0, 0], [0, 0.0, 1]], dtype=np.float32),
-    np.array([[0, 1]], dtype=np.int32),
-)
-label_surface(joint_mesh)
-
 revolute = AffineBodyRevoluteJoint()
-revolute.apply_to(joint_mesh, [left_slot], [right_slot], 100.0)
+pos0s = np.array([[0.0, 0.0, 0.0]], dtype=np.float32)
+pos1s = np.array([[0.0, 0.0, 1.0]], dtype=np.float32)
+joint_mesh = revolute.create_geometry(
+    pos0s, pos1s, [left_slot], [0], [right_slot], [0], [100.0]
+)
 
 driving = AffineBodyDrivingRevoluteJoint()
 driving.apply_to(joint_mesh, 100.0)

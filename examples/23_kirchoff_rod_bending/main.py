@@ -20,8 +20,8 @@ engine = Engine("cuda", workspace)
 world = World(engine)
 
 config = Scene.default_config()
-config['dt'] = 0.01
-config['newton']['velocity_tol'] = 0.01
+config["dt"] = 0.01
+config["newton"]["velocity_tol"] = 0.01
 print(config)
 scene = Scene(config)
 
@@ -63,7 +63,7 @@ g = ground(ground_height)
 ground_obj.geometries().create(g)
 
 sio = SceneIO(scene)
-sgui = SceneGUI(scene, 'split')
+sgui = SceneGUI(scene, "split")
 
 world.init(scene)
 

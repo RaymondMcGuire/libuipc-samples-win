@@ -11,14 +11,14 @@ from asset_dir import AssetDir
 def flatten_json(y):
     out = {}
 
-    def flatten(x, name=''):
+    def flatten(x, name=""):
 
         # If the Nested key-value
         # pair is of dict type
         if type(x) is dict:
 
             for a in x:
-                flatten(x[a], name + a + '_')
+                flatten(x[a], name + a + "_")
 
         # If the Nested key-value
         # pair is of list type
@@ -27,7 +27,7 @@ def flatten_json(y):
             i = 0
 
             for a in x:
-                flatten(a, name + str(i) + '_')
+                flatten(a, name + str(i) + "_")
                 i += 1
         else:
             out[name[:-1]] = x
@@ -39,7 +39,7 @@ def unflatten_json(y):
     out = {}
 
     for a in y:
-        keys = a.split('_')
+        keys = a.split("_")
         d = out
 
         for i in range(len(keys) - 1):

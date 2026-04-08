@@ -24,14 +24,14 @@ from asset_dir import AssetDir
 Logger.set_level(Logger.Level.Warn)
 
 workspace = AssetDir.output_path(__file__)
-engine = Engine('cuda', workspace)
+engine = Engine("cuda", workspace)
 world = World(engine)
 
 config = Scene.default_config()
 dt = 0.01
-config['dt'] = dt
-config['gravity'] = [[0.0], [-9.8], [0.0]]
-config['contact']['enable'] = False
+config["dt"] = dt
+config["gravity"] = [[0.0], [-9.8], [0.0]]
+config["contact"]["enable"] = False
 scene = Scene(config)
 
 # Constitutions
@@ -68,16 +68,16 @@ label_surface(vv_particle_mesh)
 particle_const.apply_to(vv_particle_mesh)
 spc.apply_to(vv_particle_mesh, 10000.0)
 
-vv_anim_obj = scene.objects().create('vv_animated_particle')
+vv_anim_obj = scene.objects().create("vv_animated_particle")
 vv_anim_slot, vv_anim_rest_slot = vv_anim_obj.geometries().create(vv_particle_mesh)
 
-vv_chain_obj, vv_chain_slot, vv_chain_rest_slot = create_chain('vv_chain', 0.0, 0.0)
+vv_chain_obj, vv_chain_slot, vv_chain_rest_slot = create_chain("vv_chain", 0.0, 0.0)
 
 vv_pairs = np.array([[0, 0]], dtype=np.int32)
 vv_stitch_geo = svs.create_geometry(
     (vv_anim_slot, vv_chain_slot), vv_pairs, kappa=1e6
 )
-vv_stitch_obj = scene.objects().create('vv_stitch')
+vv_stitch_obj = scene.objects().create("vv_stitch")
 vv_stitch_obj.geometries().create(vv_stitch_geo)
 
 
@@ -90,10 +90,10 @@ label_surface(ve_edge_mesh)
 empty.apply_to(ve_edge_mesh, thickness=THICKNESS)
 spc.apply_to(ve_edge_mesh, 10000.0)
 
-ve_anim_obj = scene.objects().create('ve_animated_edge')
+ve_anim_obj = scene.objects().create("ve_animated_edge")
 ve_anim_slot, ve_anim_rest_slot = ve_anim_obj.geometries().create(ve_edge_mesh)
 
-ve_chain_obj, ve_chain_slot, ve_chain_rest_slot = create_chain('ve_chain', VE_X, 0.0)
+ve_chain_obj, ve_chain_slot, ve_chain_rest_slot = create_chain("ve_chain", VE_X, 0.0)
 
 ve_pairs = np.array([[0, 0]], dtype=np.int32)
 ve_stitch_geo = sves.create_geometry(
@@ -104,7 +104,7 @@ ve_stitch_geo = sves.create_geometry(
     thickness=THICKNESS,
     min_separate_distance=MIN_SEPARATE_DISTANCE,
 )
-ve_stitch_obj = scene.objects().create('ve_stitch')
+ve_stitch_obj = scene.objects().create("ve_stitch")
 ve_stitch_obj.geometries().create(ve_stitch_geo)
 
 
@@ -117,11 +117,11 @@ label_surface(vt_tri_mesh)
 empty.apply_to(vt_tri_mesh, thickness=THICKNESS)
 spc.apply_to(vt_tri_mesh, 10000.0)
 
-vt_anim_obj = scene.objects().create('vt_animated_triangle')
+vt_anim_obj = scene.objects().create("vt_animated_triangle")
 vt_anim_slot, vt_anim_rest_slot = vt_anim_obj.geometries().create(vt_tri_mesh)
 
 vt_chain_obj, vt_chain_slot, vt_chain_rest_slot = create_chain(
-    'vt_chain', VT_X + 0.17, 0.17
+    "vt_chain", VT_X + 0.17, 0.17
 )
 
 vt_pairs = np.array([[0, 0]], dtype=np.int32)
@@ -132,7 +132,7 @@ vt_stitch_geo = svts.create_geometry(
     ElasticModuli.youngs_poisson(120e3, 0.49),
     min_separate_distance=MIN_SEPARATE_DISTANCE,
 )
-vt_stitch_obj = scene.objects().create('vt_stitch')
+vt_stitch_obj = scene.objects().create("vt_stitch")
 vt_stitch_obj.geometries().create(vt_stitch_geo)
 
 
@@ -167,7 +167,7 @@ animator.insert(vt_anim_obj, animate)
 
 # ==========================  Simulation  ===================================
 world.init(scene)
-sgui = SceneGUI(scene, 'split')
+sgui = SceneGUI(scene, "split")
 
 ps.init()
 sgui.register()
@@ -178,7 +178,7 @@ run = False
 
 def on_update():
     global run
-    if imgui.Button('run & stop'):
+    if imgui.Button("run & stop"):
         run = not run
 
     if run:

@@ -14,30 +14,30 @@ from uipc.unit import MPa, GPa
 this_folder = AssetDir.folder(__file__)
 output_path = AssetDir.output_path(__file__)
 
-engine = Engine('cuda', output_path)
+engine = Engine("cuda", output_path)
 world = World(engine)
 
 config = Scene.default_config()
 dt = 0.01
-config['dt'] = dt
-config['gravity'] = [[0.0], [-9.8], [0.0]]
-config['contact']['d_hat'] = 0.001
-config['contact']['friction']['enable'] = True
+config["dt"] = dt
+config["gravity"] = [[0.0], [-9.8], [0.0]]
+config["contact"]["d_hat"] = 0.001
+config["contact"]["friction"]["enable"] = True
 scene = Scene(config)
 
 scene.contact_tabular().default_model(0.01, 1.0 * GPa)
 
-saga_obj = scene.objects().create('saga')
+saga_obj = scene.objects().create("saga")
 sio = SimplicialComplexIO()
 abd = AffineBodyConstitution()
-saga_mesh = sio.read(f'{AssetDir.trimesh_path()}/saga.obj')
+saga_mesh = sio.read(f"{AssetDir.trimesh_path()}/saga.obj")
 
 if True:
     print(saga_mesh)
     label_region(saga_mesh)
     print(saga_mesh)
     j = saga_mesh.to_json()
-    with open(f'{output_path}/saga.json', 'w') as f:
+    with open(f"{output_path}/saga.json", "w") as f:
         json.dump(j, f, indent=4)
     saga_meshes: list[SimplicialComplex] = apply_region(saga_mesh)
 else:
@@ -50,10 +50,10 @@ for mesh in saga_meshes:
 
 ground_height = -0.4
 g = ground(ground_height)
-ground_obj = scene.objects().create('ground')
+ground_obj = scene.objects().create("ground")
 ground_obj.geometries().create(g)
 
-sgui = SceneGUI(scene, 'split')
+sgui = SceneGUI(scene, "split")
 world.init(scene)
 world.dump()
 
@@ -64,13 +64,13 @@ sgui.set_edge_width(1)
 run = False
 def on_update():
     global run
-    if(imgui.Button('run' if not run else 'stop')):
+    if(imgui.Button("run" if not run else "stop")):
         run = not run
     
     if(world.frame() >= 200):
         run = False
     
-    if(imgui.Button('recover')):
+    if(imgui.Button("recover")):
         world.recover(0)
         world.retrieve()
         sgui.update()

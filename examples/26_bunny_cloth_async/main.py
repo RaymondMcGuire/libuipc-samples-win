@@ -24,22 +24,22 @@ this_folder = AssetDir.folder(__file__)
 trimesh_path = AssetDir.trimesh_path()
 tetmesh_path = AssetDir.tetmesh_path()
 
-engine = Engine('cuda', workspace)
+engine = Engine("cuda", workspace)
 world = World(engine)
 
 config = Scene.default_config()
-config['dt'] = 0.01
-config['contact']['d_hat'] = 0.01
+config["dt"] = 0.01
+config["contact"]["d_hat"] = 0.01
 print(config)
 scene = Scene(config)
-config['gravity'] = [[0.0], [0.0], [0.0]]
+config["gravity"] = [[0.0], [0.0], [0.0]]
 
 # begin setup the scene
-cloth = scene.objects().create('cloth')
+cloth = scene.objects().create("cloth")
 t = Transform.Identity()
 t.scale(2.0)
 io = SimplicialComplexIO(t)
-cloth_mesh = io.read(f'{trimesh_path}/grid20x20.obj')
+cloth_mesh = io.read(f"{trimesh_path}/grid20x20.obj")
 label_surface(cloth_mesh)
 nks = NeoHookeanShell()
 dsb = DiscreteShellBending()
@@ -49,11 +49,11 @@ dsb.apply_to(cloth_mesh, bending_stiffness=10.0)
 view(cloth_mesh.positions())[:] += 1.0
 cloth.geometries().create(cloth_mesh)
 
-bunny = scene.objects().create('bunny')
+bunny = scene.objects().create("bunny")
 t = Transform.Identity()
 t.translate(Vector3.UnitX() + Vector3.UnitZ())
 io = SimplicialComplexIO(t)
-bunny_mesh = io.read(f'{tetmesh_path}/bunny0.msh')
+bunny_mesh = io.read(f"{tetmesh_path}/bunny0.msh")
 label_surface(bunny_mesh)
 label_triangle_orient(bunny_mesh)
 bunny_mesh = flip_inward_triangles(bunny_mesh)
@@ -69,7 +69,7 @@ world.init(scene)
 
 ps.init()
 ps.set_ground_plane_height(-1.0)
-sgui = SceneGUI(scene, 'split')
+sgui = SceneGUI(scene, "split")
 sgui.register()
 sgui.set_edge_width(1.0)
 
@@ -86,10 +86,10 @@ run = False
 
 def on_update():
     global run
-    if(imgui.Button('run & stop')):
+    if(imgui.Button("run & stop")):
         run = not run
     
-    imgui.Text(f'Physics Frame {world.frame()} | FPS: {sim_fps:.2f}')
+    imgui.Text(f"Physics Frame {world.frame()} | FPS: {sim_fps:.2f}")
 
     if(run):
         if rt.is_ready():

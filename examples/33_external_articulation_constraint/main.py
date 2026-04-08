@@ -13,7 +13,7 @@ from uipc.constitution import (
     ExternalArticulationConstraint,
     NeoHookeanShell,
 )
-from uipc.geometry import SimplicialComplex, SimplicialComplexIO, affine_body, label_surface, linemesh
+from uipc.geometry import SimplicialComplex, SimplicialComplexIO, affine_body, label_surface
 from uipc.gui import SceneGUI
 from uipc.unit import GPa, MPa, kPa
 
@@ -109,43 +109,23 @@ scene.animator().insert(links, update_ref_dof_prev)
 
 # Create revolute joint
 abrj = AffineBodyRevoluteJoint()
-
-# Each edge defines a joint axis (2 points per edge)
-Es = np.array([[0, 1]], dtype=np.int32)
-Vs = np.array([[-0.5, 0.0, -0.4], [0.5, 0.0, -0.4]], dtype=np.float32)
-joint_mesh = linemesh(Vs, Es)
-
-# Use multi-instance API
-l_geo_slots = [geo_slot]
-l_instance_id = [0]
-r_geo_slots = [geo_slot]
-r_instance_id = [1]
-strength_ratios = [100.0]
-
-abrj.apply_to(joint_mesh, l_geo_slots, l_instance_id, r_geo_slots, r_instance_id, strength_ratios)
-
+pos0s = np.array([[-0.5, 0.0, -0.4]], dtype=np.float32)
+pos1s = np.array([[0.5, 0.0, -0.4]], dtype=np.float32)
+revolute_mesh = abrj.create_geometry(
+    pos0s, pos1s, [geo_slot], [0], [geo_slot], [1], [100.0]
+)
 joints = scene.objects().create("joints")
-revolute_joint_slots, rest_revolute_joint_slots = joints.geometries().create(joint_mesh)
-revolute_slot = revolute_joint_slots
+revolute_slot, _ = joints.geometries().create(revolute_mesh)
 
 # Create prismatic joint
 abpj = AffineBodyPrismaticJoint()
-# Each edge defines a joint axis (2 points per edge)
-Es = np.array([[0, 1]], dtype=np.int32)
-Vs = np.array([[0.0, 0.0, 0.0], [0.0, 0.0, 0.4]], dtype=np.float32)
-joint_mesh = linemesh(Vs, Es)
-
-# Use multi-instance API
-l_geo_slots = [geo_slot]
-l_instance_id = [1]
-r_geo_slots = [geo_slot]
-r_instance_id = [2]
-strength_ratios = [100.0]
-abpj.apply_to(joint_mesh, l_geo_slots, l_instance_id, r_geo_slots, r_instance_id, strength_ratios)
-
-joints = scene.objects().create("joints_prismatic")
-prismatic_joint_slots, rest_prismatic_joint_slots = joints.geometries().create(joint_mesh)
-prismatic_slot = prismatic_joint_slots
+pos0s = np.array([[0.0, 0.0, 0.0]], dtype=np.float32)
+pos1s = np.array([[0.0, 0.0, 0.4]], dtype=np.float32)
+prismatic_mesh = abpj.create_geometry(
+    pos0s, pos1s, [geo_slot], [1], [geo_slot], [2], [100.0]
+)
+joints_p = scene.objects().create("joints_prismatic")
+prismatic_slot, _ = joints_p.geometries().create(prismatic_mesh)
 
 # Create external articulation constraint
 eac = ExternalArticulationConstraint()

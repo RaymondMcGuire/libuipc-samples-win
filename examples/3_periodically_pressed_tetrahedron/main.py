@@ -16,14 +16,14 @@ from asset_dir import AssetDir
 Logger.set_level(Logger.Level.Warn)
 
 workspace = AssetDir.output_path(__file__)
-engine = Engine('cuda', workspace)
+engine = Engine("cuda", workspace)
 world = World(engine)
 
 config = Scene.default_config()
 dt = 0.02
-config['dt'] = dt
-config['gravity'] = [[0.0], [-9.8], [0.0]]
-config['contact']['friction']['enable'] = True
+config["dt"] = dt
+config["gravity"] = [[0.0], [-9.8], [0.0]]
+config["contact"]["friction"]["enable"] = True
 scene = Scene(config)
 
 # friction ratio and contact resistance
@@ -32,7 +32,7 @@ default_element = scene.contact_tabular().default_element()
 
 snh = StableNeoHookean()
 spc = SoftPositionConstraint()
-tet_object = scene.objects().create('tet_object')
+tet_object = scene.objects().create("tet_object")
 Vs = np.array([[0,1,0],
                [0,0,1],
                [-np.sqrt(3)/2, 0, -0.5],
@@ -47,7 +47,7 @@ snh.apply_to(tet, moduli)
 spc.apply_to(tet, 100) # constraint strength ratio
 tet_object.geometries().create(tet)
 
-ground_object = scene.objects().create('ground')
+ground_object = scene.objects().create("ground")
 g = ground(-0.5)
 ground_object.geometries().create(g)
 
@@ -86,7 +86,7 @@ tri_surf.set_edge_width(1)
 run = False
 def on_update():
     global run
-    if(imgui.Button('run & stop')):
+    if(imgui.Button("run & stop")):
         run = not run
 
     if(run):

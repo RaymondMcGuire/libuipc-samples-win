@@ -37,7 +37,7 @@ contact_elements:list[ContactElement] = []
 
 for i in range(N):
     friction_rate = i * friction_rate_step
-    e = contact_tabular.create(f'element_{i}')
+    e = contact_tabular.create(f"element_{i}")
     contact_tabular.insert(e, default_element, 
                            friction_rate=friction_rate,
                            resistance=1e9)
@@ -47,7 +47,7 @@ for i in range(N):
 pre_transform = Transform.Identity()
 pre_transform.scale(0.3)
 io = SimplicialComplexIO(pre_transform)
-cube_mesh = io.read(f'{AssetDir.trimesh_path()}/cube.obj')
+cube_mesh = io.read(f"{AssetDir.trimesh_path()}/cube.obj")
 label_surface(cube_mesh)
 
 abd.apply_to(cube_mesh, 1e8)
@@ -70,7 +70,7 @@ ramp_object = scene.objects().create("ramp")
 pre_transform = Transform.Identity()
 pre_transform.scale(Vector3.Values([0.5 * N, 0.1, 5]))
 io = SimplicialComplexIO(pre_transform)
-ramp_mesh = io.read(f'{AssetDir.tetmesh_path()}/cube.msh')
+ramp_mesh = io.read(f"{AssetDir.tetmesh_path()}/cube.msh")
 label_surface(ramp_mesh)
 default_element.apply_to(ramp_mesh)
 abd.apply_to(ramp_mesh, 1e8)
@@ -89,4 +89,4 @@ g = ground(ground_height)
 scene.objects().create("ground").geometries().create(g)
 
 sio = SceneIO(scene)
-sio.save(f'{folder}/scene.json')
+sio.save(f"{folder}/scene.json")

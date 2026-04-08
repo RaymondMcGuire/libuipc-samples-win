@@ -14,12 +14,12 @@ from my_engine import MyEngine
 
 workspace = AssetDir.output_path(__file__)        
 my = MyEngine()
-engine = Engine('my_engine', my, workspace)
+engine = Engine("my_engine", my, workspace)
 world = World(engine)
 config = Scene.default_config()
 dt = 0.02
-config['dt'] = dt
-config['gravity'] = [[0.0], [-9.8], [0.0]]
+config["dt"] = dt
+config["gravity"] = [[0.0], [-9.8], [0.0]]
 scene = Scene(config)
 
 # create constitution and contact model
@@ -77,7 +77,7 @@ tri_surf.set_edge_width(1)
 run = False
 def on_update():
     global run
-    if(imgui.Button('run & stop')):
+    if(imgui.Button("run & stop")):
         run = not run
 
     if(run):

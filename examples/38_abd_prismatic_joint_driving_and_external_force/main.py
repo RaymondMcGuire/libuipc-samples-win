@@ -25,7 +25,6 @@ from uipc.geometry import (
     flip_inward_triangles,
     label_surface,
     label_triangle_orient,
-    linemesh,
 )
 from uipc.gui import SceneGUI
 
@@ -79,15 +78,12 @@ left_slot = left_link.geometries().create(left_mesh)[0]
 right_slot = right_link.geometries().create(right_mesh)[0]
 
 # Prismatic joint along Z axis
-joint_mesh = linemesh(
-    np.array([[0.0, 0.0, 0.0], [0.0, 0.0, 1.0]], dtype=np.float32),
-    np.array([[0, 1]], dtype=np.int32),
-)
-label_surface(joint_mesh)
-
-# 1) Base prismatic joint
 prismatic = AffineBodyPrismaticJoint()
-prismatic.apply_to(joint_mesh, [left_slot], [right_slot], 100.0)
+pos0s = np.array([[0.0, 0.0, 0.0]], dtype=np.float32)
+pos1s = np.array([[0.0, 0.0, 1.0]], dtype=np.float32)
+joint_mesh = prismatic.create_geometry(
+    pos0s, pos1s, [left_slot], [0], [right_slot], [0], [100.0]
+)
 
 # 2) Driving constitution (active during frames 1..100)
 driving = AffineBodyDrivingPrismaticJoint()
