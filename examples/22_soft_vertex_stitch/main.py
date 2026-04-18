@@ -1,22 +1,26 @@
 import numpy as np
 import polyscope as ps
-from polyscope import imgui
-
-from uipc import view
-from uipc import Logger, Timer, Animation
-from uipc import Vector3, Transform, Quaternion, AngleAxis
 import uipc.builtin as builtin
-from uipc.core import Engine, World, Scene
-from uipc.geometry import (GeometrySlot, SimplicialComplex, SimplicialComplexIO, Geometry,
-                            label_surface, label_triangle_orient, flip_inward_triangles, ground)
-from uipc.constitution import AffineBodyConstitution, StableNeoHookean, SoftVertexStitch
-from uipc.gui import SceneGUI
-from uipc.unit import MPa, GPa
 from asset_dir import AssetDir
+from polyscope import imgui
+from uipc import Logger, Transform, Vector3, view
+from uipc.constitution import AffineBodyConstitution, SoftVertexStitch, StableNeoHookean
+from uipc.core import Engine, Scene, World
+from uipc.geometry import (
+    GeometrySlot,
+    SimplicialComplexIO,
+    flip_inward_triangles,
+    ground,
+    label_surface,
+    label_triangle_orient,
+)
+from uipc.gui import SceneGUI
+from uipc.unit import GPa, MPa
 
 Logger.set_level(Logger.Level.Warn)
 
 workspace = AssetDir.output_path(__file__)
+engine = Engine("cuda", workspace)
 engine = Engine("cuda", workspace)
 world = World(engine)
 
@@ -44,7 +48,7 @@ label_surface(cube_mesh)
 label_triangle_orient(cube_mesh)
 cube_mesh = flip_inward_triangles(cube_mesh)
 
-geo_slot_list:list[GeometrySlot] = []
+geo_slot_list: list[GeometrySlot] = []
 
 # ABD
 abd_cube_obj = scene.objects().create("abd")
@@ -67,9 +71,7 @@ geo_slot_list.append(fem_geo_slot)
 
 stitch_obj = scene.objects().create("stitch")
 svs = SoftVertexStitch()
-stitch_Vs = np.array([
-    [4,1]
-], dtype=np.int32)
+stitch_Vs = np.array([[4, 1]], dtype=np.int32)
 stitch_geo = svs.create_geometry((abd_geo_slot, fem_geo_slot), stitch_Vs)
 stitch_obj.geometries().create(stitch_geo)
 
@@ -88,13 +90,15 @@ sgui.register()
 sgui.set_edge_width(1)
 
 run = False
+
+
 def on_update():
     global run
     global geo_slot_list
 
-    if(imgui.Button("run & stop")):
+    if imgui.Button("run & stop"):
         run = not run
-    
+
     for geo_slot in geo_slot_list:
         geo = geo_slot.geometry()
         gvo = geo.meta().find(builtin.global_vertex_offset)
@@ -102,11 +106,12 @@ def on_update():
             imgui.Text(f"[{geo_slot.id()}] Global Vertex Offset: {gvo.view()}")
         else:
             imgui.Text(f"[{geo_slot.id()}] This version dont support global vertex offset!")
-    
-    if(run):
+
+    if run:
         world.advance()
         world.retrieve()
         sgui.update()
+
 
 ps.set_user_callback(on_update)
 ps.show()

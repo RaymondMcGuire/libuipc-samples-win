@@ -3,10 +3,10 @@ import json
 import numpy as np
 import polyscope as ps
 import trimesh as libtrimesh
+import uipc.builtin as builtin
 from asset_dir import AssetDir
 from polyscope import imgui
-from uipc import Logger, Timer, Vector3, view
-import uipc.builtin as builtin
+from uipc import Logger, Timer, view
 from uipc.constitution import (
     DiscreteShellBending,
     ElasticModuli2D,
@@ -21,7 +21,6 @@ from uipc.geometry import (
     label_surface,
 )
 from uipc.gui import SceneGUI
-
 
 Timer.disable_all()
 Logger.set_level(Logger.Warn)
@@ -99,9 +98,7 @@ try:
     with open(JSON_FILE_PATH, "r", encoding="utf-8") as f:
         all_stitch_data = json.load(f)
 
-    print(
-        "\n--- Searching for all stitch connections between 'top_front' and 'top_back' ---"
-    )
+    print("\n--- Searching for all stitch connections between 'top_front' and 'top_back' ---")
     total_connections_found = 0
     p1_print_name, p2_print_name = "", ""
 
@@ -130,25 +127,17 @@ try:
                 all_points2.append(mesh2_vertices[idx2])
 
     if total_connections_found == 0:
-        print(
-            f"\nError: No stitch connection found between 'top_front' and 'top_back' in '{JSON_FILE_PATH}'."
-        )
+        print(f"\nError: No stitch connection found between 'top_front' and 'top_back' in '{JSON_FILE_PATH}'.")
 
     if total_connections_found > 0:
         points1_np = np.array(all_points1)
         points2_np = np.array(all_points2)
 
         print("\nData processing complete!")
-        print(
-            f"Found a total of {len(points1_np)} stitch point pairs across {total_connections_found} connections."
-        )
+        print(f"Found a total of {len(points1_np)} stitch point pairs across {total_connections_found} connections.")
 
-        print(
-            f"\nShape of the first array (from {p1_print_name}): {points1_np.shape}"
-        )
-        print(
-            f"Shape of the second array (from {p2_print_name}): {points2_np.shape}"
-        )
+        print(f"\nShape of the first array (from {p1_print_name}): {points1_np.shape}")
+        print(f"Shape of the second array (from {p2_print_name}): {points2_np.shape}")
 
 except (FileNotFoundError, Exception) as e:
     print(f"\nA fatal error occurred during file processing: {e}")
@@ -169,18 +158,16 @@ scene.contact_tabular().insert(stitch_front, stitch_back, 0, 1e9, True)
 # Add stitch constraints
 stitch_obj = scene.objects().create("stitch")
 svs = SoftVertexStitch()
-front_geo_slot, _ = t_shirt_obj.geometries().create(
-    t_shirt_front, rest_t_shirt_front
-)
+front_geo_slot, _ = t_shirt_obj.geometries().create(t_shirt_front, rest_t_shirt_front)
 back_geo_slot, _ = t_shirt_obj.geometries().create(t_shirt_back, rest_t_shirt_back)
 stitch_geo = svs.create_geometry(
     # geometry pair to stitched
-    (front_geo_slot, back_geo_slot), 
+    (front_geo_slot, back_geo_slot),
     # vertex pairs to stitch
-    stitch_Vs, 
+    stitch_Vs,
     # contact elements for stitching vertex pairs
-    (stitch_front, stitch_back), 
-    1000.0
+    (stitch_front, stitch_back),
+    1000.0,
 )
 stitch_obj.geometries().create(stitch_geo)
 # -----------------------------------------------------------------------------
@@ -211,8 +198,10 @@ sio = SceneIO(scene)
 
 ps.init()
 sgui = SceneGUI(scene, "split")
+sgui = SceneGUI(scene, "split")
 sgui.register()
 sgui.set_edge_width(1.0)
+
 
 def write_to_disk(frame):
     io = SimplicialComplexIO()
@@ -220,36 +209,37 @@ def write_to_disk(frame):
         f"{output_dir}/cloth_front_surface{frame}.obj",
         front_geo_slot.geometry(),
     )
-    io.write(
-        f"{output_dir}/cloth_back_surface{frame}.obj", 
-        back_geo_slot.geometry()
-    )
+    io.write(f"{output_dir}/cloth_back_surface{frame}.obj", back_geo_slot.geometry())
     sio.write_surface(f"{output_dir}/scene_surface{frame}.obj")
+
 
 run = False
 save_frames = False
+
+
 def on_update():
     global run, save_frames
-    if(imgui.Button("run & stop")):
+    if imgui.Button("run & stop"):
         run = not run
-    
+
     imgui.SameLine()
-    if(imgui.Button("save frame")):
+    if imgui.Button("save frame"):
         write_to_disk(world.frame())
         print(f"Frame {world.frame()} saved.")
-    
+
     imgui.SameLine()
-    changed , value = imgui.Checkbox("auto save", save_frames)
+    changed, value = imgui.Checkbox("auto save", save_frames)
     if changed:
         save_frames = value
-        
-    if(run):
+
+    if run:
         world.advance()
         world.retrieve()
         sgui.update()
         if save_frames:
             write_to_disk(world.frame())
             print(f"Frame {world.frame()} done.")
+
 
 ps.set_user_callback(on_update)
 ps.show()
