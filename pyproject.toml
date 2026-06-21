@@ -7,4 +7,5 @@ requires-python = ">=3.11"
 dependencies = ["keyboard>=0.13.5", "trimesh>=4.11.1", "matplotlib"]
 
 [dependency-groups]
+build-pyuipc = ["numpy", "pybind11", "pybind11-stubgen"]
 pypi = ["pyuipc"]
